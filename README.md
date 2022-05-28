@@ -1,5 +1,10 @@
 # Moralis FirstDapp
 
+## Description
+- we created our own smartcontract using solidity and compiling it, deploying it and verifying it with hardhat.
+- we created the react app
+- we used Moralis to integrate the reactapp and smartcontract together to be able to vote and displaying informations.
+
 ## Configure
 ### SmartContract
 Create .env file in ./smartcontract :

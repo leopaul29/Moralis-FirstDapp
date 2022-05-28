@@ -20,7 +20,7 @@ function Coin({perc, setPerc, token, setModalToken, setVisible}) {
     async function vote(upDown) {
 
         let options = {
-            contractAddress: "0xC21a5620b3fA95433b63517d70214DCfC5246534",
+            contractAddress: process.env.REACT_APP_SMARTCONTRACT,
             functionName: "vote",
             abi: [{"inputs":[{"internalType":"string","name":"_ticker","type":"string"},{"internalType":"bool","name":"_vote","type":"bool"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"}],
             params: {

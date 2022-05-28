@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 contract MarketSentiment {
 
@@ -20,8 +20,8 @@ contract MarketSentiment {
 
     event tickerupdated (
         uint256 up,
-        uint256 up,
-        adress voter,
+        uint256 down,
+        address voter,
         string ticker
     );
 
@@ -32,7 +32,7 @@ contract MarketSentiment {
     function addTicker(string memory _ticker) public {
         require(msg.sender == owner, "Only the owner can create tickers");
         ticker storage newTicker = Tickers[_ticker];
-        newTicker.exist = true;
+        newTicker.exists = true;
         tickersArray.push(_ticker);
     }
 

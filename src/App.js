@@ -4,15 +4,73 @@ import { ConnectButton, Modal } from "web3uikit";
 import logo from "./images/Moralis.png";
 import Coin from "./components/Coin";
 import { abouts } from './about.js'
+import { useMoralisWeb3Api, useMoralis } from "react-moralis";
 
 const App = () => {
 
 const [btc, setBtc] = useState(80);
 const [eth, setEth] = useState(38);
 const [link, setLink] = useState(62);
-
+const [modalPrice, setModalPrice] = useState();
+const Web3Api = useMoralisWeb3Api();
+const {Moralis, isInitialized} = useMoralis();
 const [visible, setVisible] = useState(false);
 const [modalToken, setModalToken] = useState();
+
+async function getRatio(tick, setPerc) {
+
+    const Votes = Moralis.Object.extend("Votes");
+    const query = new Moralis.Query(Votes);
+    query.equalTo("ticker", tick);
+    query.descending("createdAt");
+    const results = await query.first();
+    let up = Number(results.attributes.up);
+    let down = Number(results.attributes.down);
+    let ratio = Math.round(up/(up+down)*100);
+    setPerc(ratio)
+}
+
+useEffect(() => {
+    if(isInitialized) {
+        getRatio("BTC", setBtc);
+        getRatio("ETH", setEth);
+        getRatio("LINK", setLink);
+
+        async function createLiveQuery() {
+            let query = new Moralis.Query('Votes');
+            let subscription = await query.subscribe();
+            subscription.on('update', (object) => {
+                if(object.attributes.ticker === "LINK") {
+                    getRatio("LINK", setLink);
+                }
+                if(object.attributes.ticker === "ETH") {
+                    getRatio("ETH", setEth);
+                }
+                if(object.attributes.ticker === "BTC") {
+                    getRatio("BTC", setBtc);
+                }
+            });
+        }
+
+        createLiveQuery();
+    }
+}, [isInitialized])
+
+useEffect(() => {
+
+    async function fetchTokenPrice() {
+        const options= {
+        address: abouts[abouts.findIndex((x)=> x.token === modalToken)].address,
+        };
+        const price = await Web3Api.token.getTokenPrice(options);
+        setModalPrice(price.usdPrice.toFixed(2));
+    }
+
+    if(modalToken) {
+        fetchTokenPrice();
+    }
+
+}, [modalToken])
 
   return (
     <>
@@ -56,6 +114,9 @@ const [modalToken, setModalToken] = useState();
         hasFooter={false}
         title={modalToken}
         >
+        <div>
+            <span>Price: </span> {modalPrice}$
+        </div>
         <div>
             <span>About</span>
         </div>

@@ -25,7 +25,7 @@ module.exports = {
   networks: {
     mumbai: {
       url: process.env.POLYGON_MUMBAI,
-      account: [process.env.PRIVATE_KEY]
+      accounts: [process.env.PRIVATE_KEY]
     }
   },
   etherscan: {
